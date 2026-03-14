@@ -1,0 +1,493 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Canvas of Chaos | By Ashnoor</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* SHOOTING STAR CURSOR */
+
+.shooting-star-cursor{
+position:fixed;
+width:16px;
+height:16px;
+pointer-events:none;
+z-index:9999;
+transform:translate(-50%,-50%);
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z' fill='%23A5B4FC'/%3E%3C/svg%3E");
+background-size:contain;
+filter:drop-shadow(0 0 6px rgba(165,180,252,0.7));
+}
+
+.star-trail{
+position:fixed;
+width:6px;
+height:6px;
+background:white;
+border-radius:50%;
+pointer-events:none;
+z-index:9998;
+
+box-shadow:
+0 0 8px white,
+0 0 18px rgba(255,255,255,0.7),
+0 0 28px rgba(255,255,255,0.4);
+
+animation:trailFade 1.2s cubic-bezier(.17,.67,.3,1) forwards;
+}
+
+@keyframes trailFade{
+
+0%{
+opacity:1;
+transform:scale(1) translate(0,0);
+}
+
+100%{
+opacity:0;
+transform:scale(0.2) translate(var(--dx),var(--dy));
+}
+
+}
+@keyframes trailFade{
+0%{opacity:1;transform:scale(1);}
+100%{opacity:0;transform:scale(0.3);}
+}
+:root{
+--deep-space:#0A0E17;
+--starlight:#E2E8F0;
+--moonstone:#A5B4FC;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+<div class="shooting-star-cursor"></div>
+font-family:'Josefin Sans',sans-serif;
+background:radial-gradient(ellipse at center,#000 0%,var(--deep-space) 100%);
+color:var(--starlight);
+overflow-x:hidden;
+}
+
+/* STARRY BACKGROUND */
+
+.stars{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+overflow:hidden;
+}
+
+.star{
+position:absolute;
+background:white;
+border-radius:50%;
+animation:twinkle var(--duration) infinite ease-in-out;
+opacity:var(--opacity);
+}
+
+@keyframes twinkle{
+0%,100%{opacity:calc(var(--opacity)*0.5);}
+50%{opacity:var(--opacity);}
+}
+
+/* HEADER */
+
+header{
+position:fixed;
+top:0;
+width:100%;
+padding:25px 0;
+text-align:center;
+background:rgba(10,14,23,0.85);
+backdrop-filter:blur(6px);
+border-bottom:1px solid rgba(165,180,252,0.15);
+z-index:1000;
+}
+
+.logo{
+font-family:'Playfair Display',serif;
+font-size:2rem;
+color:var(--starlight);
+text-decoration:none;
+}
+
+/* HERO */
+
+.hero{
+height:90vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:0 20px;
+}
+
+.hero h1{
+font-family:'Playfair Display',serif;
+font-size:3rem;
+margin-bottom:20px;
+}
+
+.hero p{
+max-width:650px;
+opacity:0.85;
+line-height:1.7;
+}
+
+/* GALLERY */
+
+.gallery{
+padding:120px 20px;
+}
+
+.gallery-container{
+column-count:4;
+column-gap:25px;
+max-width:1500px;
+margin:auto;
+}
+
+.art-card{
+break-inside:avoid;
+margin-bottom:25px;
+background:rgba(10,14,23,0.55);
+padding:10px;
+border-radius:6px;
+border:1px solid rgba(165,180,252,0.15);
+transition:.35s;
+cursor:pointer;
+}
+
+.art-card:hover{
+transform:translateY(-6px) scale(1.03);
+box-shadow:0 0 30px rgba(165,180,252,0.45);
+}
+
+.art-card img{
+width:100%;
+border-radius:4px;
+}
+
+.art-card h3{
+margin-top:10px;
+text-align:center;
+font-family:'Playfair Display',serif;
+font-size:1.1rem;
+color:var(--moonstone);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1100px){
+.gallery-container{column-count:3;}
+}
+
+@media(max-width:750px){
+.gallery-container{column-count:2;}
+}
+
+@media(max-width:500px){
+.gallery-container{column-count:1;}
+}
+
+/* LIGHTBOX */
+
+.lightbox{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.92);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:2000;
+padding:40px;
+}
+
+.lightbox.active{
+display:flex;
+}
+
+.lightbox img{
+max-width:90%;
+max-height:90vh;
+border-radius:6px;
+}
+
+.close-btn{
+position:absolute;
+top:30px;
+right:40px;
+font-size:40px;
+color:white;
+cursor:pointer;
+}
+
+/* FOOTER */
+
+footer{
+text-align:center;
+padding:60px 20px;
+border-top:1px solid rgba(165,180,252,0.1);
+margin-top:80px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="stars"></div>
+
+<header>
+<a class="logo">Canvas of Chaos</a>
+</header>
+
+<section class="hero">
+<div>
+<h1>By Ashnoor</h1>
+ <p>I make art to make an impact — not small talk. Each piece is a result of intention, precision, and the need to create something that can speak louder than my own words.</p>
+            
+            <div>˖⁺‧₊˚  ˚₊‧⁺˖✮ ── ✩₊⁺⋆☾⋆⁺₊✩ ── ✮˖⁺‧₊˚  ˚₊‧⁺˖</div>
+            
+            <p>This space is a curated collection of some of my works across different mediums — including mixed media, and traditional forms. Every artwork here has a story to tell, but I don't believe in explaining it. Look closer, and you'll find what you're meant to.</p>
+        </div>
+</section>
+
+<section class="gallery">
+
+<div class="gallery-container" id="gallery">
+
+<div class="art-card">
+<img src="art1.jpg" loading="lazy">
+<h3>Artwork 1</h3>
+</div>
+
+<div class="art-card">
+<img src="art2.jpg" loading="lazy">
+<h3>Artwork 2</h3>
+</div>
+
+<div class="art-card">
+<img src="art3.jpg" loading="lazy">
+<h3>Artwork 3</h3>
+</div>
+
+<div class="art-card">
+<img src="art4.jpg" loading="lazy">
+<h3>Artwork 4</h3>
+</div>
+
+<div class="art-card">
+<img src="art5.jpg" loading="lazy">
+<h3>Artwork 5</h3>
+</div>
+
+<div class="art-card">
+<img src="art6.jpg" loading="lazy">
+<h3>Artwork 6</h3>
+</div>
+
+<div class="art-card">
+<img src="art7.jpg" loading="lazy">
+<h3>Artwork 7</h3>
+</div>
+
+<div class="art-card">
+<img src="art8.jpg" loading="lazy">
+<h3>Artwork 8</h3>
+</div>
+
+<div class="art-card">
+<img src="art9.jpg" loading="lazy">
+<h3>Artwork 9</h3>
+</div>
+
+<div class="art-card">
+<img src="art10.jpg" loading="lazy">
+<h3>Artwork 10</h3>
+</div>
+
+
+
+</div>
+
+</section>
+
+<div class="lightbox" id="lightbox">
+<span class="close-btn" id="closeBtn">×</span>
+<img id="lightbox-img">
+</div>
+
+<footer>
+<p>© 2026 Ashnoor</p>
+</footer>
+
+<script>
+/* SHOOTING STAR CURSOR */
+
+const cursor=document.querySelector(".shooting-star-cursor");
+
+document.addEventListener("mousemove",e=>{
+cursor.style.left=e.clientX+"px";
+cursor.style.top=e.clientY+"px";
+
+createTrail(e.clientX,e.clientY);
+});
+
+function createTrail(x,y){
+
+const star=document.createElement("div");
+star.className="star-trail";
+
+star.style.left=x+"px";
+star.style.top=y+"px";
+
+document.body.appendChild(star);
+
+setTimeout(()=>{star.remove();},800);
+
+}
+
+
+/* CLICK BURST */
+
+document.addEventListener("click",e=>{
+
+for(let i=0;i<12;i++){
+
+const star=document.createElement("div");
+star.className="star-trail";
+
+const offsetX=(Math.random()-0.5)*80;
+const offsetY=(Math.random()-0.5)*80;
+
+star.style.left=(e.clientX+offsetX)+"px";
+star.style.top=(e.clientY+offsetY)+"px";
+
+document.body.appendChild(star);
+
+setTimeout(()=>{star.remove();},800);
+
+}
+
+});
+
+/* CREATE STARS */
+
+function createStars(){
+
+const container=document.querySelector(".stars");
+const starCount=150;
+
+for(let i=0;i<starCount;i++){
+
+const star=document.createElement("div");
+star.className="star";
+
+const size=Math.random()*1.5+0.5;
+const opacity=Math.random()*0.7+0.3;
+const duration=Math.random()*5+3;
+
+star.style.cssText=`
+--opacity:${opacity};
+--duration:${duration}s;
+width:${size}px;
+height:${size}px;
+left:${Math.random()*100}%;
+top:${Math.random()*100}%;
+animation-delay:${Math.random()*5}s;
+`;
+
+container.appendChild(star);
+
+}
+
+}
+
+createStars();
+
+
+/* LIGHTBOX */
+
+const gallery=document.getElementById("gallery");
+const lightbox=document.getElementById("lightbox");
+const lightboxImg=document.getElementById("lightbox-img");
+const closeBtn=document.getElementById("closeBtn");
+
+gallery.addEventListener("click",e=>{
+const img=e.target.closest("img");
+if(!img) return;
+lightboxImg.src=img.src;
+lightbox.classList.add("active");
+});
+
+closeBtn.onclick=()=>lightbox.classList.remove("active");
+
+lightbox.onclick=e=>{
+if(e.target!==lightboxImg){
+lightbox.classList.remove("active");
+}
+};
+
+
+/* INFINITE SCROLL */
+
+let artCount=9;
+const maxArt=72;
+
+function loadMoreArt(){
+
+for(let i=0;i<8;i++){
+
+if(artCount>maxArt) return;
+
+const card=document.createElement("div");
+card.className="art-card";
+
+const img=document.createElement("img");
+img.src=`art${artCount}.jpg`;
+img.loading="lazy";
+
+const title=document.createElement("h3");
+title.textContent=`Artwork ${artCount}`;
+
+card.appendChild(img);
+card.appendChild(title);
+gallery.appendChild(card);
+
+artCount++;
+
+}
+
+}
+
+window.addEventListener("scroll",()=>{
+
+if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 500){
+loadMoreArt();
+}
+
+});
+
+</script>
+
+</body>
+</html>
+```
