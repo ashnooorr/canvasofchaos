@@ -150,7 +150,29 @@ max-width:650px;
 opacity:0.85;
 line-height:1.7;
 }
+ <script>
+    const container = document.querySelector('.gallery-container');
+    const totalArt = 72; // Change this to your exact number of artworks
 
+    for (let i = 1; i <= totalArt; i++) {
+        // Create the card
+        const card = document.createElement('div');
+        card.className = 'art-card';
+
+        // Create the image
+        const img = document.createElement('img');
+        
+        // IMPORTANT: Make sure this matches your file extension (.jpg or .jpeg)
+        img.src = `art${i}.jpg`; 
+        
+        img.alt = `Artwork ${i}`;
+        img.loading = "lazy"; // This stops the "glitching" by loading as you scroll
+
+        // Put it all together
+        card.appendChild(img);
+        container.appendChild(card);
+    }
+</script>
 /* GALLERY */
 
 .gallery{
