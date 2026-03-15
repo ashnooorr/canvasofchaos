@@ -52,34 +52,27 @@
         .hero h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 20px; }
         .hero p { max-width: 650px; opacity: 0.85; line-height: 1.7; margin: 0 auto 15px; }
 
-        /* MASONRY GRID (Airy & Spacious) */
+        /* THE ZIGZAG MASONRY GRID */
         .gallery { padding: 40px 20px; }
         .gallery-container { 
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            max-width: 1500px; 
-            margin: auto;
-            align-items: start;
-        }
-
-        /* Separate columns to handle masonry properly */
-        .gallery-column {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            column-count: 3; /* Changed to 3 for laptop */
+            column-gap: 35px; /* Added more spacing between drawings */
+            max-width: 1400px; 
+            margin: auto; 
         }
         
         .art-card {
+            break-inside: avoid;
+            margin-bottom: 35px; /* More spacing below drawings */
             background: rgba(10,14,23,0.55);
-            padding: 10px; 
-            border-radius: 6px; 
-            border: 1px solid rgba(165,180,252,0.15);
+            padding: 12px; 
+            border-radius: 8px; 
+            border: 1px solid rgba(165, 180, 252, 0.15);
             transition: .35s; 
             cursor: pointer;
         }
         
-        .art-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 0 30px rgba(165,180,252,0.3); }
+        .art-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 0 30px rgba(165,180,252,0.3); }
         
         .art-card img { 
             width: 100%; 
@@ -87,16 +80,13 @@
             display: block; 
             border-radius: 4px;
         }
-        
-        .art-card h3 { display: none !important; }
 
         /* RESPONSIVE */
-        @media(max-width:1100px) { .gallery-container { grid-template-columns: repeat(3, 1fr); } }
-        @media(max-width:750px) { .gallery-container { grid-template-columns: repeat(2, 1fr); } }
+        @media(max-width:900px) { .gallery-container { column-count: 2; column-gap: 25px; } }
         @media(max-width:500px) { 
-            .gallery-container { grid-template-columns: repeat(2, 1fr); gap: 12px; } 
+            .gallery-container { column-count: 2; column-gap: 15px; } 
+            .art-card { margin-bottom: 15px; padding: 8px; }
             .hero h1 { font-size: 2.2rem; }
-            .gallery { padding: 20px 10px; }
         }
 
         /* BACK TO TOP */
@@ -108,10 +98,14 @@
         }
 
         /* LIGHTBOX */
-        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .lightbox { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
+            display: none; align-items: center; justify-content: center; 
+            z-index: 9999; padding: 20px; 
+        }
         .lightbox.active { display: flex; }
-        .lightbox img { max-width: 95%; max-height: 90vh; border-radius: 4px; }
-        .close-btn { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; }
+        .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,0.6); }
+        .close-btn { position: absolute; top: 20px; right: 30px; font-size: 50px; color: white; cursor: pointer; }
 
         footer { text-align: center; padding: 100px 20px; width: 100%; opacity: 0.5; font-size: 0.8rem; clear: both; }
     </style>
@@ -133,19 +127,14 @@
     </section>
 
     <section class="gallery">
-        <div class="gallery-container" id="gallery">
-            <div class="gallery-column"></div>
-            <div class="gallery-column"></div>
-            <div class="gallery-column"></div>
-            <div class="gallery-column"></div>
-        </div>
+        <div class="gallery-container" id="gallery"></div>
     </section>
 
     <button id="backToTop">↑ Back to Top</button>
 
     <div class="lightbox" id="lightbox">
         <span class="close-btn" id="closeBtn">×</span>
-        <img id="lightbox-img">
+        <img id="lightbox-img" src="" alt="Full size art">
     </div>
 
     <footer><p>© 2026 Ashnoor</p></footer>
@@ -176,8 +165,8 @@
     }
     createStars();
 
-    /* ART LOADER - The Smart Way */
-    const columns = document.querySelectorAll(".gallery-column");
+    /* ART LOADER */
+    const gallery = document.getElementById("gallery");
     let currentArtIndex = 1;
     const maxArt = 72;
     let isFetching = false;
@@ -197,26 +186,17 @@
             img.onerror = function() { this.closest('.art-card').remove(); }; 
             
             card.appendChild(img);
-            
-            // This balances the columns so they end as close to each other as possible
-            let shortestColumn = columns[0];
-            columns.forEach(col => {
-                if (col.offsetHeight < shortestColumn.offsetHeight) {
-                    shortestColumn = col;
-                }
-            });
-            
-            shortestColumn.appendChild(card);
+            gallery.appendChild(card);
             currentArtIndex++;
         }
         isFetching = false;
     }
 
-    loadArtBatch(16);
+    loadArtBatch(9); // Loading initial set
 
     window.addEventListener("scroll", () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
-            loadArtBatch(8);
+            loadArtBatch(6);
         }
     });
 
@@ -228,18 +208,33 @@
     });
     topBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
-    /* LIGHTBOX */
+    /* LIGHTBOX LOGIC */
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
-    document.getElementById("gallery").addEventListener("click", e => {
-        const img = e.target.closest("img");
-        if (img) {
-            lightboxImg.src = img.src;
-            lightbox.classList.add("active");
+    
+    gallery.addEventListener("click", (e) => {
+        const card = e.target.closest(".art-card");
+        if (card) {
+            const img = card.querySelector("img");
+            if (img) {
+                lightboxImg.src = img.src;
+                lightbox.classList.add("active");
+                document.body.style.overflow = "hidden";
+            }
         }
     });
-    document.getElementById("closeBtn").onclick = () => lightbox.classList.remove("active");
-    lightbox.onclick = e => { if (e.target !== lightboxImg) lightbox.classList.remove("active"); };
+
+    document.getElementById("closeBtn").onclick = () => {
+        lightbox.classList.remove("active");
+        document.body.style.overflow = "auto";
+    };
+
+    lightbox.onclick = (e) => {
+        if (e.target !== lightboxImg) {
+            lightbox.classList.remove("active");
+            document.body.style.overflow = "auto";
+        }
+    };
 </script>
 
 </body>
