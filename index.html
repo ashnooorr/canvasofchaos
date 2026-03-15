@@ -24,7 +24,7 @@
             overflow-x: hidden;
         }
 
-        /* CURSOR & STARS (Keeping your cool effects) */
+        /* CURSOR & STARS */
         .shooting-star-cursor {
             position: fixed; width: 16px; height: 16px; pointer-events: none; z-index: 9999;
             transform: translate(-50%,-50%);
@@ -52,40 +52,52 @@
         .hero h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 20px; }
         .hero p { max-width: 650px; opacity: 0.85; line-height: 1.7; margin: 0 auto 15px; }
 
-        /* THE "FLEX-ROW" GRID FIX */
-        .gallery { padding: 40px 10px; }
+        /* MASONRY GRID (Airy & Spacious) */
+        .gallery { padding: 40px 20px; }
         .gallery-container { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 12px; 
-            max-width: 1600px; 
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1500px; 
             margin: auto;
+            align-items: start;
+        }
+
+        /* Separate columns to handle masonry properly */
+        .gallery-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
         
         .art-card {
-            height: 300px; /* Base height for every row */
-            flex-grow: 1; /* This is the secret—it stretches the width to fill the row perfectly */
-            position: relative;
             background: rgba(10,14,23,0.55);
-            border-radius: 6px;
-            overflow: hidden;
+            padding: 10px; 
+            border-radius: 6px; 
             border: 1px solid rgba(165,180,252,0.15);
-            transition: transform 0.35s ease;
+            transition: .35s; 
             cursor: pointer;
         }
         
-        .art-card:hover { transform: scale(1.02); z-index: 10; }
-
+        .art-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 0 30px rgba(165,180,252,0.3); }
+        
         .art-card img { 
-            height: 100%; /* Image fills the 300px height */
-            width: 100%;
-            object-fit: cover; /* This makes images fit the calculated width without stretching */
-            display: block;
+            width: 100%; 
+            height: auto;
+            display: block; 
+            border-radius: 4px;
         }
+        
+        .art-card h3 { display: none !important; }
 
-        /* Responsive height adjustments */
-        @media(max-width: 800px) { .art-card { height: 200px; } }
-        @media(max-width: 500px) { .art-card { height: 160px; } .hero h1 { font-size: 2.2rem; } }
+        /* RESPONSIVE */
+        @media(max-width:1100px) { .gallery-container { grid-template-columns: repeat(3, 1fr); } }
+        @media(max-width:750px) { .gallery-container { grid-template-columns: repeat(2, 1fr); } }
+        @media(max-width:500px) { 
+            .gallery-container { grid-template-columns: repeat(2, 1fr); gap: 12px; } 
+            .hero h1 { font-size: 2.2rem; }
+            .gallery { padding: 20px 10px; }
+        }
 
         /* BACK TO TOP */
         #backToTop {
@@ -98,10 +110,10 @@
         /* LIGHTBOX */
         .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
         .lightbox.active { display: flex; }
-        .lightbox img { max-width: 95%; max-height: 90vh; border-radius: 4px; object-fit: contain; }
+        .lightbox img { max-width: 95%; max-height: 90vh; border-radius: 4px; }
         .close-btn { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; }
 
-        footer { text-align: center; padding: 60px 20px; width: 100%; opacity: 0.5; font-size: 0.8rem; clear: both; }
+        footer { text-align: center; padding: 100px 20px; width: 100%; opacity: 0.5; font-size: 0.8rem; clear: both; }
     </style>
 </head>
 
@@ -121,7 +133,12 @@
     </section>
 
     <section class="gallery">
-        <div class="gallery-container" id="gallery"></div>
+        <div class="gallery-container" id="gallery">
+            <div class="gallery-column"></div>
+            <div class="gallery-column"></div>
+            <div class="gallery-column"></div>
+            <div class="gallery-column"></div>
+        </div>
     </section>
 
     <button id="backToTop">↑ Back to Top</button>
@@ -134,11 +151,10 @@
     <footer><p>© 2026 Ashnoor</p></footer>
 
 <script>
-    /* CURSOR & STARS LOGIC */
+    /* CURSOR & STARS */
     const cursor = document.querySelector(".shooting-star-cursor");
     document.addEventListener("mousemove", e => {
-        cursor.style.left = e.clientX + "px";
-        cursor.style.top = e.clientY + "px";
+        cursor.style.left = e.clientX + "px"; cursor.style.top = e.clientY + "px";
         createTrail(e.clientX, e.clientY);
     });
     function createTrail(x, y) {
@@ -160,8 +176,8 @@
     }
     createStars();
 
-    /* ART LOADER */
-    const gallery = document.getElementById("gallery");
+    /* ART LOADER - The Smart Way */
+    const columns = document.querySelectorAll(".gallery-column");
     let currentArtIndex = 1;
     const maxArt = 72;
     let isFetching = false;
@@ -172,24 +188,35 @@
 
         for (let i = 0; i < count; i++) {
             if (currentArtIndex > maxArt) break;
+            
             const card = document.createElement("div");
             card.className = "art-card";
             const img = document.createElement("img");
             img.src = `art${currentArtIndex}.jpg`; 
             img.loading = "lazy";
             img.onerror = function() { this.closest('.art-card').remove(); }; 
+            
             card.appendChild(img);
-            gallery.appendChild(card);
+            
+            // This balances the columns so they end as close to each other as possible
+            let shortestColumn = columns[0];
+            columns.forEach(col => {
+                if (col.offsetHeight < shortestColumn.offsetHeight) {
+                    shortestColumn = col;
+                }
+            });
+            
+            shortestColumn.appendChild(card);
             currentArtIndex++;
         }
         isFetching = false;
     }
 
-    loadArtBatch(15); // Load more at once to fill the first few rows
+    loadArtBatch(16);
 
     window.addEventListener("scroll", () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
-            loadArtBatch(10);
+            loadArtBatch(8);
         }
     });
 
@@ -204,7 +231,7 @@
     /* LIGHTBOX */
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
-    gallery.addEventListener("click", e => {
+    document.getElementById("gallery").addEventListener("click", e => {
         const img = e.target.closest("img");
         if (img) {
             lightboxImg.src = img.src;
