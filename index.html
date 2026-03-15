@@ -65,7 +65,28 @@
             transition: .35s; cursor: pointer;
         }
         .art-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 0 30px rgba(165,180,252,0.3); }
-        .art-card img { width: 100%; border-radius: 4px; display: block; min-height: 150px; background: #000; }
+
+             /* Update your existing .art-card img section */
+.art-card img { 
+    width: 100%; 
+    height: auto; /* This ensures the aspect ratio stays perfect */
+    display: block; 
+    object-fit: contain; /* This prevents stretching/squishing */
+    background: #000; 
+}
+
+/* Update your mobile media query */
+@media(max-width:500px) { 
+    .gallery-container { 
+        column-count: 2; 
+        column-gap: 10px; 
+    } 
+    .art-card img {
+        min-height: auto; /* Removes the minimum height on phones so landscape images don't stretch */
+    }
+}
+        
+       
         
         /* This hides any subheadings that might get added */
         .art-card h3 { display: none !important; }
