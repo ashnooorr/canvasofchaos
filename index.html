@@ -24,7 +24,7 @@
             overflow-x: hidden;
         }
 
-        /* CURSOR STYLE */
+        /* CURSOR & STARS (Keeping your cool effects) */
         .shooting-star-cursor {
             position: fixed; width: 16px; height: 16px; pointer-events: none; z-index: 9999;
             transform: translate(-50%,-50%);
@@ -37,8 +37,6 @@
             animation: trailFade 1.2s forwards;
         }
         @keyframes trailFade { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.2); } }
-
-        /* STARS BACKGROUND */
         .stars { position: fixed; inset: 0; z-index: -1; }
         .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--duration) infinite ease-in-out; opacity: var(--opacity); }
         @keyframes twinkle { 0%, 100% { opacity: calc(var(--opacity)*0.5); } 50% { opacity: var(--opacity); } }
@@ -46,68 +44,64 @@
         header {
             position: fixed; top: 0; width: 100%; padding: 25px 0; text-align: center;
             background: rgba(10, 14, 23, 0.85); backdrop-filter: blur(6px);
-            border-bottom: 1px solid rgba(165,180,252,0.15); z-index: 1000;
+            border-bottom: 1px solid rgba(165, 180, 252, 0.15); z-index: 1000;
         }
-        .logo { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--starlight); text-decoration: none; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--starlight); }
 
         .hero { min-height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 40px; }
         .hero h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 20px; }
         .hero p { max-width: 650px; opacity: 0.85; line-height: 1.7; margin: 0 auto 15px; }
 
-        /* MASONRY GRID (BUT NEATER) */
-        .gallery { padding: 40px 20px; }
+        /* THE "FLEX-ROW" GRID FIX */
+        .gallery { padding: 40px 10px; }
         .gallery-container { 
-            column-count: 4; 
-            column-gap: 20px; 
-            max-width: 1500px; 
-            margin: auto; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 12px; 
+            max-width: 1600px; 
+            margin: auto;
         }
         
         .art-card {
-            break-inside: avoid;
-            margin-bottom: 20px;
+            height: 300px; /* Base height for every row */
+            flex-grow: 1; /* This is the secret—it stretches the width to fill the row perfectly */
+            position: relative;
             background: rgba(10,14,23,0.55);
-            padding: 10px; 
-            border-radius: 6px; 
+            border-radius: 6px;
+            overflow: hidden;
             border: 1px solid rgba(165,180,252,0.15);
-            transition: .35s; 
+            transition: transform 0.35s ease;
             cursor: pointer;
         }
         
-        .art-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 0 30px rgba(165,180,252,0.3); }
-        
+        .art-card:hover { transform: scale(1.02); z-index: 10; }
+
         .art-card img { 
-            width: 100%; 
-            height: auto; /* THIS SAVES YOUR DRAWINGS! No cropping. */
-            display: block; 
-            border-radius: 4px;
-        }
-        
-        .art-card h3 { display: none !important; }
-
-        /* RESPONSIVE */
-        @media(max-width:1100px) { .gallery-container { column-count: 3; } }
-        @media(max-width:750px) { .gallery-container { column-count: 2; } }
-        @media(max-width:500px) { 
-            .gallery-container { column-count: 2; column-gap: 10px; } 
-            .hero h1 { font-size: 2.2rem; }
+            height: 100%; /* Image fills the 300px height */
+            width: 100%;
+            object-fit: cover; /* This makes images fit the calculated width without stretching */
+            display: block;
         }
 
-        /* BACK TO TOP BUTTON */
+        /* Responsive height adjustments */
+        @media(max-width: 800px) { .art-card { height: 200px; } }
+        @media(max-width: 500px) { .art-card { height: 160px; } .hero h1 { font-size: 2.2rem; } }
+
+        /* BACK TO TOP */
         #backToTop {
             display: none; position: fixed; bottom: 30px; right: 30px; padding: 12px 20px; 
             background: var(--moonstone); color: var(--deep-space); border: none; 
             border-radius: 50px; cursor: pointer; font-family: 'Josefin Sans'; font-weight: bold; 
-            z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;
+            z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         /* LIGHTBOX */
-        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
         .lightbox.active { display: flex; }
-        .lightbox img { max-width: 95%; max-height: 90vh; border-radius: 6px; }
+        .lightbox img { max-width: 95%; max-height: 90vh; border-radius: 4px; object-fit: contain; }
         .close-btn { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; }
 
-        footer { text-align: center; padding: 80px 20px; width: 100%; opacity: 0.5; font-size: 0.8rem; clear: both; }
+        footer { text-align: center; padding: 60px 20px; width: 100%; opacity: 0.5; font-size: 0.8rem; clear: both; }
     </style>
 </head>
 
@@ -122,7 +116,7 @@
             <h1>By Ashnoor</h1>
             <p>I make art to make an impact — not small talk. Each piece is a result of intention, precision, and the need to create something that can speak louder than my own words.</p>
             <div style="margin: 20px 0;">˖⁺‧₊˚ ˚₊‧⁺˖✮ ── ✩₊⁺⋆☾⋆⁺₊✩ ── ✮˖⁺‧₊˚ ˚₊‧⁺˖</div>
-            <p>This space is a curated collection of some of my works. Look closer, and you'll find what you're meant to.</p>
+            <p>Look closer, and you'll find what you're meant to.</p>
         </div>
     </section>
 
@@ -140,22 +134,20 @@
     <footer><p>© 2026 Ashnoor</p></footer>
 
 <script>
+    /* CURSOR & STARS LOGIC */
     const cursor = document.querySelector(".shooting-star-cursor");
     document.addEventListener("mousemove", e => {
         cursor.style.left = e.clientX + "px";
         cursor.style.top = e.clientY + "px";
         createTrail(e.clientX, e.clientY);
     });
-
     function createTrail(x, y) {
         const star = document.createElement("div");
         star.className = "star-trail";
-        star.style.left = x + "px";
-        star.style.top = y + "px";
+        star.style.left = x + "px"; star.style.top = y + "px";
         document.body.appendChild(star);
         setTimeout(() => star.remove(), 800);
     }
-
     function createStars() {
         const starContainer = document.querySelector(".stars");
         for (let i = 0; i < 150; i++) {
@@ -168,9 +160,10 @@
     }
     createStars();
 
+    /* ART LOADER */
     const gallery = document.getElementById("gallery");
     let currentArtIndex = 1;
-    const maxArt = 72; 
+    const maxArt = 72;
     let isFetching = false;
 
     function loadArtBatch(count) {
@@ -192,21 +185,23 @@
         isFetching = false;
     }
 
-    loadArtBatch(12);
+    loadArtBatch(15); // Load more at once to fill the first few rows
 
     window.addEventListener("scroll", () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
-            loadArtBatch(8);
+            loadArtBatch(10);
         }
     });
 
+    /* BACK TO TOP */
     const topBtn = document.getElementById("backToTop");
     window.addEventListener("scroll", () => {
-        if (window.scrollY > 800) { topBtn.style.display = "block"; } 
-        else { topBtn.style.display = "none"; }
+        if (window.scrollY > 800) topBtn.style.display = "block";
+        else topBtn.style.display = "none";
     });
     topBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
+    /* LIGHTBOX */
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
     gallery.addEventListener("click", e => {
