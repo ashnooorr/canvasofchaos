@@ -15,7 +15,7 @@
             --moonstone: #A5B4FC;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
 
         body {
             font-family: 'Josefin Sans', sans-serif;
@@ -24,19 +24,21 @@
             overflow-x: hidden;
         }
 
-        /* CURSOR & STARS */
+        /* CURSOR & STARS - BUMPED Z-INDEX */
         .shooting-star-cursor {
-            position: fixed; width: 16px; height: 16px; pointer-events: none; z-index: 9999;
+            position: fixed; width: 16px; height: 16px; pointer-events: none; 
+            z-index: 10000; /* Higher than Lightbox */
             transform: translate(-50%,-50%);
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z' fill='%23A5B4FC'/%3E%3C/svg%3E");
             background-size: contain; filter: drop-shadow(0 0 6px rgba(165,180,252,0.7));
         }
         .star-trail {
             position: fixed; width: 6px; height: 6px; background: white; border-radius: 50%;
-            pointer-events: none; z-index: 9998; box-shadow: 0 0 8px white;
+            pointer-events: none; z-index: 9999; box-shadow: 0 0 8px white;
             animation: trailFade 1.2s forwards;
         }
         @keyframes trailFade { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.2); } }
+        
         .stars { position: fixed; inset: 0; z-index: -1; }
         .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--duration) infinite ease-in-out; opacity: var(--opacity); }
         @keyframes twinkle { 0%, 100% { opacity: calc(var(--opacity)*0.5); } 50% { opacity: var(--opacity); } }
@@ -55,30 +57,50 @@
         /* THE ZIGZAG MASONRY GRID */
         .gallery { padding: 40px 20px; }
         .gallery-container { 
-            column-count: 3; /* Changed to 3 for laptop */
-            column-gap: 35px; /* Added more spacing between drawings */
+            column-count: 3; 
+            column-gap: 40px; 
             max-width: 1400px; 
             margin: auto; 
         }
         
         .art-card {
             break-inside: avoid;
-            margin-bottom: 35px; /* More spacing below drawings */
+            margin-bottom: 40px;
             background: rgba(10,14,23,0.55);
             padding: 12px; 
             border-radius: 8px; 
             border: 1px solid rgba(165, 180, 252, 0.15);
             transition: .35s; 
-            cursor: pointer;
+            animation: reveal 0.8s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
         }
+        @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
         
         .art-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 0 30px rgba(165,180,252,0.3); }
-        
-        .art-card img { 
-            width: 100%; 
-            height: auto;
-            display: block; 
-            border-radius: 4px;
+        .art-card img { width: 100%; height: auto; display: block; border-radius: 4px; }
+
+        /* LIGHTBOX - Z-INDEX IS BELOW CURSOR */
+        .lightbox { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
+            display: none; align-items: center; justify-content: center; 
+            z-index: 9000; padding: 20px; 
+        }
+        .lightbox.active { display: flex; }
+        .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,0.6); }
+        .close-btn { position: absolute; top: 20px; right: 30px; font-size: 50px; color: white; }
+
+        /* FOOTER & SOCIALS */
+        footer { text-align: center; padding: 100px 20px; width: 100%; clear: both; }
+        .footer-content { opacity: 0.6; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .instagram-link { color: var(--moonstone); text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .instagram-link:hover { opacity: 1; text-shadow: 0 0 10px var(--moonstone); }
+
+        #backToTop {
+            display: none; position: fixed; bottom: 30px; right: 30px; padding: 12px 20px; 
+            background: var(--moonstone); color: var(--deep-space); border: none; 
+            border-radius: 50px; font-family: 'Josefin Sans'; font-weight: bold; 
+            z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         /* RESPONSIVE */
@@ -88,26 +110,6 @@
             .art-card { margin-bottom: 15px; padding: 8px; }
             .hero h1 { font-size: 2.2rem; }
         }
-
-        /* BACK TO TOP */
-        #backToTop {
-            display: none; position: fixed; bottom: 30px; right: 30px; padding: 12px 20px; 
-            background: var(--moonstone); color: var(--deep-space); border: none; 
-            border-radius: 50px; cursor: pointer; font-family: 'Josefin Sans'; font-weight: bold; 
-            z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        /* LIGHTBOX */
-        .lightbox { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
-            display: none; align-items: center; justify-content: center; 
-            z-index: 9999; padding: 20px; 
-        }
-        .lightbox.active { display: flex; }
-        .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,0.6); }
-        .close-btn { position: absolute; top: 20px; right: 30px; font-size: 50px; color: white; cursor: pointer; }
-
-        footer { text-align: center; padding: 100px 20px; width: 100%; opacity: 0.5; font-size: 0.8rem; clear: both; }
     </style>
 </head>
 
@@ -134,25 +136,35 @@
 
     <div class="lightbox" id="lightbox">
         <span class="close-btn" id="closeBtn">×</span>
-        <img id="lightbox-img" src="" alt="Full size art">
+        <img id="lightbox-img" src="">
     </div>
 
-    <footer><p>© 2026 Ashnoor</p></footer>
+    <footer>
+        <div class="footer-content">
+            <p>© 2026 Ashnoor</p>
+            <span>•</span>
+            <a href="https://instagram.com/ash.noorr" target="_blank" class="instagram-link">Instagram</a>
+        </div>
+    </footer>
 
 <script>
-    /* CURSOR & STARS */
+    /* CURSOR LOGIC - NOW PERSISTENT OVER LIGHTBOX */
     const cursor = document.querySelector(".shooting-star-cursor");
     document.addEventListener("mousemove", e => {
-        cursor.style.left = e.clientX + "px"; cursor.style.top = e.clientY + "px";
+        cursor.style.left = e.clientX + "px";
+        cursor.style.top = e.clientY + "px";
         createTrail(e.clientX, e.clientY);
     });
+
     function createTrail(x, y) {
         const star = document.createElement("div");
         star.className = "star-trail";
-        star.style.left = x + "px"; star.style.top = y + "px";
+        star.style.left = x + "px"; 
+        star.style.top = y + "px";
         document.body.appendChild(star);
         setTimeout(() => star.remove(), 800);
     }
+
     function createStars() {
         const starContainer = document.querySelector(".stars");
         for (let i = 0; i < 150; i++) {
@@ -177,9 +189,10 @@
 
         for (let i = 0; i < count; i++) {
             if (currentArtIndex > maxArt) break;
-            
             const card = document.createElement("div");
             card.className = "art-card";
+            card.style.animationDelay = `${(i % count) * 0.1}s`;
+            
             const img = document.createElement("img");
             img.src = `art${currentArtIndex}.jpg`; 
             img.loading = "lazy";
@@ -192,7 +205,7 @@
         isFetching = false;
     }
 
-    loadArtBatch(9); // Loading initial set
+    loadArtBatch(12);
 
     window.addEventListener("scroll", () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
