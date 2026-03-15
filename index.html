@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:title" content="Canvas of Chaos | By Ashnoor">
-     <meta property="og:description" content="Art made to make an impact. Explore the curated collection.">
-     <meta property="og:image" content="art1.jpg"> ```
     <title>Canvas of Chaos | By Ashnoor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,10 +24,10 @@
             overflow-x: hidden;
         }
 
-        /* CURSOR & STARS - BUMPED Z-INDEX */
+        /* CURSOR & STARS */
         .shooting-star-cursor {
             position: fixed; width: 16px; height: 16px; pointer-events: none; 
-            z-index: 10000; /* Higher than Lightbox */
+            z-index: 10000;
             transform: translate(-50%,-50%);
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z' fill='%23A5B4FC'/%3E%3C/svg%3E");
             background-size: contain; filter: drop-shadow(0 0 6px rgba(165,180,252,0.7));
@@ -66,24 +63,39 @@
             margin: auto; 
         }
         
+        /* THE HOVER POP EFFECT */
         .art-card {
             break-inside: avoid;
             margin-bottom: 40px;
             background: rgba(10,14,23,0.55);
             padding: 12px; 
             border-radius: 8px; 
-            border: 1px solid rgba(165, 180, 252, 0.15);
-            transition: .35s; 
+            border: 1px solid rgba(165, 180, 252, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             animation: reveal 0.8s ease forwards;
             opacity: 0;
             transform: translateY(20px);
+            position: relative;
+            z-index: 1;
         }
         @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
         
-        .art-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 0 30px rgba(165,180,252,0.3); }
+        .art-card:hover { 
+            transform: translateY(-15px) scale(1.05); 
+            z-index: 10;
+            box-shadow: 0 20px 40px rgba(165, 180, 252, 0.25);
+            border-color: var(--moonstone);
+        }
+
+        /* DIM OTHERS ON HOVER */
+        .gallery-container:hover .art-card:not(:hover) {
+            opacity: 0.6;
+            filter: grayscale(30%) blur(1px);
+        }
+
         .art-card img { width: 100%; height: auto; display: block; border-radius: 4px; }
 
-        /* LIGHTBOX - Z-INDEX IS BELOW CURSOR */
+        /* LIGHTBOX */
         .lightbox { 
             position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
             display: none; align-items: center; justify-content: center; 
@@ -93,7 +105,7 @@
         .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,0.6); }
         .close-btn { position: absolute; top: 20px; right: 30px; font-size: 50px; color: white; }
 
-        /* FOOTER & SOCIALS */
+        /* FOOTER */
         footer { text-align: center; padding: 100px 20px; width: 100%; clear: both; }
         .footer-content { opacity: 0.6; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 20px; }
         .instagram-link { color: var(--moonstone); text-decoration: none; font-weight: 500; transition: 0.3s; }
@@ -106,7 +118,6 @@
             z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* RESPONSIVE */
         @media(max-width:900px) { .gallery-container { column-count: 2; column-gap: 25px; } }
         @media(max-width:500px) { 
             .gallery-container { column-count: 2; column-gap: 15px; } 
@@ -146,12 +157,11 @@
         <div class="footer-content">
             <p>© 2026 Ashnoor</p>
             <span>•</span>
-            <a href="https://instagram.com/ash.noorr" target="_blank" class="instagram-link">Instagram</a>
+            <a href="https://instagram.com/ashnooorr" target="_blank" class="instagram-link">Instagram</a>
         </div>
     </footer>
 
 <script>
-    /* CURSOR LOGIC - NOW PERSISTENT OVER LIGHTBOX */
     const cursor = document.querySelector(".shooting-star-cursor");
     document.addEventListener("mousemove", e => {
         cursor.style.left = e.clientX + "px";
@@ -180,7 +190,6 @@
     }
     createStars();
 
-    /* ART LOADER */
     const gallery = document.getElementById("gallery");
     let currentArtIndex = 1;
     const maxArt = 72;
@@ -199,59 +208,3 @@
             const img = document.createElement("img");
             img.src = `art${currentArtIndex}.jpg`; 
             img.loading = "lazy";
-            img.onerror = function() { this.closest('.art-card').remove(); }; 
-            
-            card.appendChild(img);
-            gallery.appendChild(card);
-            currentArtIndex++;
-        }
-        isFetching = false;
-    }
-
-    loadArtBatch(12);
-
-    window.addEventListener("scroll", () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
-            loadArtBatch(6);
-        }
-    });
-
-    /* BACK TO TOP */
-    const topBtn = document.getElementById("backToTop");
-    window.addEventListener("scroll", () => {
-        if (window.scrollY > 800) topBtn.style.display = "block";
-        else topBtn.style.display = "none";
-    });
-    topBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
-
-    /* LIGHTBOX LOGIC */
-    const lightbox = document.getElementById("lightbox");
-    const lightboxImg = document.getElementById("lightbox-img");
-    
-    gallery.addEventListener("click", (e) => {
-        const card = e.target.closest(".art-card");
-        if (card) {
-            const img = card.querySelector("img");
-            if (img) {
-                lightboxImg.src = img.src;
-                lightbox.classList.add("active");
-                document.body.style.overflow = "hidden";
-            }
-        }
-    });
-
-    document.getElementById("closeBtn").onclick = () => {
-        lightbox.classList.remove("active");
-        document.body.style.overflow = "auto";
-    };
-
-    lightbox.onclick = (e) => {
-        if (e.target !== lightboxImg) {
-            lightbox.classList.remove("active");
-            document.body.style.overflow = "auto";
-        }
-    };
-</script>
-
-</body>
-</html>
