@@ -46,7 +46,7 @@
         header {
             position: fixed; top: 0; width: 100%; padding: 25px 0; text-align: center;
             background: rgba(10, 14, 23, 0.85); backdrop-filter: blur(6px);
-            border-bottom: 1px solid rgba(165, 180, 252, 0.15); z-index: 1000;
+            border-bottom: 1px solid rgba(165,180,252,0.15); z-index: 1000;
         }
         .logo { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--starlight); text-decoration: none; }
 
@@ -54,84 +54,60 @@
         .hero h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 20px; }
         .hero p { max-width: 650px; opacity: 0.85; line-height: 1.7; margin: 0 auto 15px; }
 
-        /* STRAIGHT LINE GRID */
+        /* MASONRY GRID (BUT NEATER) */
         .gallery { padding: 40px 20px; }
         .gallery-container { 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            gap: 20px; 
+            column-count: 4; 
+            column-gap: 20px; 
             max-width: 1500px; 
             margin: auto; 
         }
         
         .art-card {
-            flex: 1 1 calc(25% - 20px); 
-            max-width: calc(25% - 20px);
+            break-inside: avoid;
+            margin-bottom: 20px;
             background: rgba(10,14,23,0.55);
             padding: 10px; 
             border-radius: 6px; 
             border: 1px solid rgba(165,180,252,0.15);
             transition: .35s; 
             cursor: pointer;
-            display: flex;
-            align-items: center;
         }
         
         .art-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 0 30px rgba(165,180,252,0.3); }
         
         .art-card img { 
             width: 100%; 
-            height: 280px; /* Forces straight lines */
-            object-fit: cover; 
-            border-radius: 4px; 
+            height: auto; /* THIS SAVES YOUR DRAWINGS! No cropping. */
             display: block; 
-            background: #000; 
+            border-radius: 4px;
         }
         
         .art-card h3 { display: none !important; }
 
         /* RESPONSIVE */
-        @media(max-width:1100px) {
-            .art-card { flex: 1 1 calc(33.33% - 20px); max-width: calc(33.33% - 20px); }
-        }
-        @media(max-width:750px) {
-            .art-card { flex: 1 1 calc(50% - 20px); max-width: calc(50% - 20px); }
-        }
+        @media(max-width:1100px) { .gallery-container { column-count: 3; } }
+        @media(max-width:750px) { .gallery-container { column-count: 2; } }
         @media(max-width:500px) { 
-            .art-card { flex: 1 1 calc(50% - 10px); max-width: calc(50% - 10px); }
-            .art-card img { height: 200px; } 
+            .gallery-container { column-count: 2; column-gap: 10px; } 
             .hero h1 { font-size: 2.2rem; }
-            .gallery { padding: 20px 10px; }
+        }
+
+        /* BACK TO TOP BUTTON */
+        #backToTop {
+            display: none; position: fixed; bottom: 30px; right: 30px; padding: 12px 20px; 
+            background: var(--moonstone); color: var(--deep-space); border: none; 
+            border-radius: 50px; cursor: pointer; font-family: 'Josefin Sans'; font-weight: bold; 
+            z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;
         }
 
         /* LIGHTBOX */
         .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
         .lightbox.active { display: flex; }
-        .lightbox img { max-width: 95%; max-height: 90vh; border-radius: 6px; object-fit: contain; }
+        .lightbox img { max-width: 95%; max-height: 90vh; border-radius: 6px; }
         .close-btn { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; }
 
-        /* BACK TO TOP BUTTON */
-        #backToTop {
-            display: none; 
-            position: fixed; 
-            bottom: 30px; 
-            right: 30px; 
-            padding: 12px 20px; 
-            background: var(--moonstone); 
-            color: var(--deep-space); 
-            border: none; 
-            border-radius: 50px; 
-            cursor: pointer; 
-            font-family: 'Josefin Sans', sans-serif; 
-            font-weight: bold; 
-            z-index: 3000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: 0.3s;
-        }
-        #backToTop:hover { transform: scale(1.1); background: #fff; }
-
-        footer { text-align: center; padding: 60px 20px; width: 100%; opacity: 0.5; font-size: 0.8rem; clear: both; }
+        footer { text-align: center; padding: 80px 20px; width: 100%; opacity: 0.5; font-size: 0.8rem; clear: both; }
     </style>
 </head>
 
@@ -164,7 +140,6 @@
     <footer><p>© 2026 Ashnoor</p></footer>
 
 <script>
-    /* CURSOR LOGIC */
     const cursor = document.querySelector(".shooting-star-cursor");
     document.addEventListener("mousemove", e => {
         cursor.style.left = e.clientX + "px";
@@ -181,7 +156,6 @@
         setTimeout(() => star.remove(), 800);
     }
 
-    /* STARS BACKGROUND */
     function createStars() {
         const starContainer = document.querySelector(".stars");
         for (let i = 0; i < 150; i++) {
@@ -194,7 +168,6 @@
     }
     createStars();
 
-    /* ART LOADER LOGIC */
     const gallery = document.getElementById("gallery");
     let currentArtIndex = 1;
     const maxArt = 72; 
@@ -206,18 +179,12 @@
 
         for (let i = 0; i < count; i++) {
             if (currentArtIndex > maxArt) break;
-            
             const card = document.createElement("div");
             card.className = "art-card";
-            
             const img = document.createElement("img");
             img.src = `art${currentArtIndex}.jpg`; 
             img.loading = "lazy";
-            
-            img.onerror = function() { 
-                this.closest('.art-card').remove(); 
-            }; 
-            
+            img.onerror = function() { this.closest('.art-card').remove(); }; 
             card.appendChild(img);
             gallery.appendChild(card);
             currentArtIndex++;
@@ -227,25 +194,19 @@
 
     loadArtBatch(12);
 
-    /* INFINITE SCROLL */
     window.addEventListener("scroll", () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
             loadArtBatch(8);
         }
     });
 
-    /* BACK TO TOP LOGIC */
     const topBtn = document.getElementById("backToTop");
     window.addEventListener("scroll", () => {
-        if (window.scrollY > 800) {
-            topBtn.style.display = "block";
-        } else {
-            topBtn.style.display = "none";
-        }
+        if (window.scrollY > 800) { topBtn.style.display = "block"; } 
+        else { topBtn.style.display = "none"; }
     });
     topBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
-    /* LIGHTBOX */
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
     gallery.addEventListener("click", e => {
