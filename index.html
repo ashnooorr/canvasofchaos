@@ -203,10 +203,11 @@ color:var(--moonstone);
 .gallery-container{column-count:2;}
 }
 
-@media(max-width:500px){
-.gallery-container{column-count:1;}
-}
-
+@media(max-width:500px){ 
+ .gallery-container { 
+        column-count: 2; /* Change from 1 to 2 */
+        column-gap: 10px; /* Make the gap smaller so they fit */
+ }
 /* LIGHTBOX */
 
 .lightbox{
