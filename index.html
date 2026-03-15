@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,38 +64,27 @@
             transition: .35s; cursor: pointer;
         }
         .art-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 0 30px rgba(165,180,252,0.3); }
-
-             /* Update your existing .art-card img section */
-.art-card img { 
-    width: 100%; 
-    height: auto; /* This ensures the aspect ratio stays perfect */
-    display: block; 
-    object-fit: contain; /* This prevents stretching/squishing */
-    background: #000; 
-}
-
-/* Update your mobile media query */
-@media(max-width:500px) { 
-    .gallery-container { 
-        column-count: 2; 
-        column-gap: 10px; 
-    } 
-    .art-card img {
-        min-height: auto; /* Removes the minimum height on phones so landscape images don't stretch */
-    }
-}
         
-       
+        .art-card img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            object-fit: contain; 
+            background: #000; 
+            border-radius: 4px;
+        }
         
-        /* This hides any subheadings that might get added */
+        /* Hides any auto-generated subheadings */
         .art-card h3 { display: none !important; }
 
         /* RESPONSIVE */
         @media(max-width:1100px) { .gallery-container { column-count: 3; } }
         @media(max-width:750px) { .gallery-container { column-count: 2; } }
         @media(max-width:500px) { 
-            .gallery-container { column-count: 2; column-gap: 15px; } 
+            .gallery-container { column-count: 2; column-gap: 10px; } 
+            .art-card img { min-height: auto; }
             .hero h1 { font-size: 2.2rem; }
+            .gallery { padding: 20px 10px; }
         }
 
         /* LIGHTBOX */
@@ -170,31 +158,42 @@
     /* ART LOADER LOGIC */
     const gallery = document.getElementById("gallery");
     let currentArtIndex = 1;
-    const maxArt = 72;
+    const maxArt = 72; // Update this number if you add more art!
+    let isFetching = false;
 
     function loadArtBatch(count) {
+        if (isFetching || currentArtIndex > maxArt) return;
+        isFetching = true;
+
         for (let i = 0; i < count; i++) {
-            if (currentArtIndex > maxArt) return;
+            if (currentArtIndex > maxArt) break;
+            
             const card = document.createElement("div");
             card.className = "art-card";
+            
             const img = document.createElement("img");
-            // Change .jpg to .jpeg if your files still have the 'e'
+            // If your files are .jpeg, change ".jpg" to ".jpeg" below
             img.src = `art${currentArtIndex}.jpg`; 
             img.loading = "lazy";
-            img.onerror = function() { this.parentElement.style.display = 'none'; }; // Hide if image missing
+            
+            // This removes the whole card if the image file is missing
+            img.onerror = function() { 
+                this.closest('.art-card').remove(); 
+            }; 
             
             card.appendChild(img);
             gallery.appendChild(card);
             currentArtIndex++;
         }
+        isFetching = false;
     }
 
-    // Load first batch
+    // Load first 12 images
     loadArtBatch(12);
 
     /* INFINITE SCROLL */
     window.addEventListener("scroll", () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 800) {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
             loadArtBatch(8);
         }
     });
