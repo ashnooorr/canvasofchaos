@@ -15,100 +15,156 @@
             --moonstone: #A5B4FC;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        /* Enable custom cursor styles only on desktop devices */
+        @media (hover: hover) and (pointer: fine) {
+            * { cursor: none !important; }
+            .shooting-star-cursor { display: block; }
+        }
 
         body {
             font-family: 'Josefin Sans', sans-serif;
             background: radial-gradient(ellipse at center, #000 0%, var(--deep-space) 100%);
             color: var(--starlight);
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        /* CURSOR & STARS - BUMPED Z-INDEX */
+        /* CURSOR & TRAILS */
         .shooting-star-cursor {
-            position: fixed; width: 16px; height: 16px; pointer-events: none; 
-            z-index: 10000; /* Higher than Lightbox */
-            transform: translate(-50%,-50%);
+            display: none;
+            position: fixed; 
+            width: 16px; 
+            height: 16px; 
+            pointer-events: none; 
+            z-index: 10000;
+            transform: translate(-50%, -50%);
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z' fill='%23A5B4FC'/%3E%3C/svg%3E");
-            background-size: contain; filter: drop-shadow(0 0 6px rgba(165,180,252,0.7));
+            background-size: contain; 
+            filter: drop-shadow(0 0 6px rgba(165,180,252,0.7));
         }
-        .star-trail {
-            position: fixed; width: 6px; height: 6px; background: white; border-radius: 50%;
-            pointer-events: none; z-index: 9999; box-shadow: 0 0 8px white;
-            animation: trailFade 1.2s forwards;
-        }
-        @keyframes trailFade { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.2); } }
-        
-        .stars { position: fixed; inset: 0; z-index: -1; }
-        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--duration) infinite ease-in-out; opacity: var(--opacity); }
-        @keyframes twinkle { 0%, 100% { opacity: calc(var(--opacity)*0.5); } 50% { opacity: var(--opacity); } }
 
+        .star-trail {
+            position: fixed; 
+            width: 6px; 
+            height: 6px; 
+            background: white; 
+            border-radius: 50%;
+            pointer-events: none; 
+            z-index: 9999; 
+            box-shadow: 0 0 8px white;
+            animation: trailFade 0.8s forwards ease-out;
+        }
+
+        @keyframes trailFade { 
+            0% { opacity: 1; transform: scale(1); } 
+            100% { opacity: 0; transform: scale(0.1); } 
+        }
+        
+        .stars { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--duration) infinite ease-in-out; opacity: var(--opacity); }
+        @keyframes twinkle { 0%, 100% { opacity: calc(var(--opacity)*0.3); } 50% { opacity: var(--opacity); } }
+
+        /* HEADER */
         header {
-            position: fixed; top: 0; width: 100%; padding: 25px 0; text-align: center;
-            background: rgba(10, 14, 23, 0.85); backdrop-filter: blur(6px);
+            position: fixed; top: 0; width: 100%; padding: 20px 0; text-align: center;
+            background: rgba(10, 14, 23, 0.85); backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(165, 180, 252, 0.15); z-index: 1000;
         }
-        .logo { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--starlight); }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--starlight); letter-spacing: 1px; }
 
-        .hero { min-height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 40px; }
-        .hero h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 20px; }
-        .hero p { max-width: 650px; opacity: 0.85; line-height: 1.7; margin: 0 auto 15px; }
+        /* HERO SECTION */
+        .hero { min-height: 75vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 40px; }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 20px; color: var(--starlight); }
+        .hero p { max-width: 650px; opacity: 0.85; line-height: 1.7; margin: 0 auto 15px; font-weight: 300; }
 
-        /* THE ZIGZAG MASONRY GRID */
+        /* FLEXBOX GALLERY GRID (PREVENTS JUMPING) */
         .gallery { padding: 40px 20px; }
         .gallery-container { 
-            column-count: 3; 
-            column-gap: 40px; 
+            display: flex;
+            gap: 30px;
             max-width: 1400px; 
             margin: auto; 
+            align-items: flex-start;
+        }
+
+        .gallery-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            flex: 1;
+            width: 100%;
         }
         
         .art-card {
-            break-inside: avoid;
-            margin-bottom: 40px;
-            background: rgba(10,14,23,0.55);
+            background: rgba(10, 14, 23, 0.55);
             padding: 12px; 
             border-radius: 8px; 
             border: 1px solid rgba(165, 180, 252, 0.15);
-            transition: .35s; 
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease; 
             animation: reveal 0.8s ease forwards;
             opacity: 0;
             transform: translateY(20px);
         }
         @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
         
-        .art-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 0 30px rgba(165,180,252,0.3); }
-        .art-card img { width: 100%; height: auto; display: block; border-radius: 4px; }
+        .art-card:hover { 
+            transform: translateY(-6px) scale(1.01); 
+            box-shadow: 0 10px 30px rgba(165, 180, 252, 0.25);
+            border-color: rgba(165, 180, 252, 0.4);
+        }
+        
+        .art-card img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            border-radius: 4px; 
+        }
 
-        /* LIGHTBOX - Z-INDEX IS BELOW CURSOR */
+        /* LIGHTBOX */
         .lightbox { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.92); 
             display: none; align-items: center; justify-content: center; 
-            z-index: 9000; padding: 20px; 
+            z-index: 9000; padding: 20px; backdrop-filter: blur(4px);
         }
         .lightbox.active { display: flex; }
-        .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 4px; box-shadow: 0 0 40px rgba(0,0,0,0.6); }
-        .close-btn { position: absolute; top: 20px; right: 30px; font-size: 50px; color: white; }
+        .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 6px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.8); }
+        .close-btn { 
+            position: absolute; top: 20px; right: 30px; font-size: 40px; color: var(--starlight); 
+            user-select: none; transition: color 0.2s;
+        }
+        .close-btn:hover { color: var(--moonstone); }
 
-        /* FOOTER & SOCIALS */
-        footer { text-align: center; padding: 100px 20px; width: 100%; clear: both; }
-        .footer-content { opacity: 0.6; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 20px; }
+        /* FOOTER & BUTTONS */
+        footer { text-align: center; padding: 80px 20px; width: 100%; }
+        .footer-content { opacity: 0.7; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 15px; }
         .instagram-link { color: var(--moonstone); text-decoration: none; font-weight: 500; transition: 0.3s; }
-        .instagram-link:hover { opacity: 1; text-shadow: 0 0 10px var(--moonstone); }
+        .instagram-link:hover { opacity: 1; text-shadow: 0 0 12px var(--moonstone); }
 
         #backToTop {
-            display: none; position: fixed; bottom: 30px; right: 30px; padding: 12px 20px; 
+            display: none; position: fixed; bottom: 30px; right: 30px; padding: 12px 24px; 
             background: var(--moonstone); color: var(--deep-space); border: none; 
-            border-radius: 50px; font-family: 'Josefin Sans'; font-weight: bold; 
-            z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-radius: 50px; font-family: 'Josefin Sans', sans-serif; font-weight: bold; 
+            z-index: 3000; box-shadow: 0 4px 20px rgba(165, 180, 252, 0.4);
+            transition: transform 0.2s, background 0.2s;
         }
+        #backToTop:hover { transform: translateY(-3px); background: #c7d2fe; }
 
-        /* RESPONSIVE */
-        @media(max-width:900px) { .gallery-container { column-count: 2; column-gap: 25px; } }
-        @media(max-width:500px) { 
-            .gallery-container { column-count: 2; column-gap: 15px; } 
-            .art-card { margin-bottom: 15px; padding: 8px; }
+        /* RESPONSIVE BREAKPOINTS */
+        @media (max-width: 900px) { 
+            .gallery-container { gap: 20px; } 
+            .gallery-column { gap: 20px; }
+        }
+        @media (max-width: 600px) { 
+            .gallery-container { flex-direction: column; } 
+            .art-card { padding: 10px; }
             .hero h1 { font-size: 2.2rem; }
+            .hero { padding-top: 100px; min-height: auto; }
         }
     </style>
 </head>
@@ -117,13 +173,13 @@
     <div class="shooting-star-cursor"></div>
     <div class="stars"></div>
 
-    <header><a class="logo">Canvas of Chaos</a></header>
+    <header><span class="logo">Canvas of Chaos</span></header>
 
     <section class="hero">
         <div>
             <h1>By Ashnoor</h1>
             <p>I make art to make an impact — not small talk. Each piece is a result of intention, precision, and the need to create something that can speak louder than my own words.</p>
-            <div style="margin: 20px 0;">˖⁺‧₊˚ ˚₊‧⁺˖✮ ── ✩₊⁺⋆☾⋆⁺₊✩ ── ✮˖⁺‧₊˚ ˚₊‧⁺˖</div>
+            <div style="margin: 20px 0; opacity: 0.8;">˖⁺‧₊˚ ˚₊‧⁺˖✮ ── ✩₊⁺⋆☾⋆⁺₊✩ ── ✮˖⁺‧₊˚ ˚₊‧⁺˖</div>
             <p>Look closer, and you'll find what you're meant to.</p>
         </div>
     </section>
@@ -135,26 +191,36 @@
     <button id="backToTop">↑ Back to Top</button>
 
     <div class="lightbox" id="lightbox">
-        <span class="close-btn" id="closeBtn">×</span>
-        <img id="lightbox-img" src="">
+        <span class="close-btn" id="closeBtn">&times;</span>
+        <img id="lightbox-img" src="" alt="Artwork enlarged view">
     </div>
 
     <footer>
         <div class="footer-content">
             <p>© 2026 Ashnoor</p>
             <span>•</span>
-            <a href="https://instagram.com/ash.noorr" target="_blank" class="instagram-link">Instagram</a>
+            <a href="https://instagram.com/ash.noorr" target="_blank" rel="noopener noreferrer" class="instagram-link">Instagram</a>
         </div>
     </footer>
 
 <script>
-    /* CURSOR LOGIC - NOW PERSISTENT OVER LIGHTBOX */
+    /* CURSOR TRAIL LOGIC */
     const cursor = document.querySelector(".shooting-star-cursor");
-    document.addEventListener("mousemove", e => {
-        cursor.style.left = e.clientX + "px";
-        cursor.style.top = e.clientY + "px";
-        createTrail(e.clientX, e.clientY);
-    });
+    const isPointerFine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+    if (isPointerFine) {
+        let lastTrailTime = 0;
+        document.addEventListener("mousemove", e => {
+            cursor.style.left = e.clientX + "px";
+            cursor.style.top = e.clientY + "px";
+            
+            const now = Date.now();
+            if (now - lastTrailTime > 30) {
+                createTrail(e.clientX, e.clientY);
+                lastTrailTime = now;
+            }
+        });
+    }
 
     function createTrail(x, y) {
         const star = document.createElement("div");
@@ -165,20 +231,34 @@
         setTimeout(() => star.remove(), 800);
     }
 
+    /* BACKGROUND STARS */
     function createStars() {
         const starContainer = document.querySelector(".stars");
-        for (let i = 0; i < 150; i++) {
+        const fragment = document.createDocumentFragment();
+        for (let i = 0; i < 120; i++) {
             const star = document.createElement("div");
             star.className = "star";
             const size = Math.random() * 1.5 + 0.5;
             star.style.cssText = `--opacity:${Math.random()*0.7+0.3}; --duration:${Math.random()*5+3}s; width:${size}px; height:${size}px; left:${Math.random()*100}%; top:${Math.random()*100}%;`;
-            starContainer.appendChild(star);
+            fragment.appendChild(star);
         }
+        starContainer.appendChild(fragment);
     }
     createStars();
 
-    /* ART LOADER */
+    /* SETUP FIXED FLEX COLUMNS */
     const gallery = document.getElementById("gallery");
+    const numColumns = 3;
+    const columns = [];
+
+    for (let i = 0; i < numColumns; i++) {
+        const col = document.createElement("div");
+        col.className = "gallery-column";
+        gallery.appendChild(col);
+        columns.push(col);
+    }
+
+    /* DYNAMIC ART GALLERY LOADER */
     let currentArtIndex = 1;
     const maxArt = 100;
     let isFetching = false;
@@ -189,39 +269,55 @@
 
         for (let i = 0; i < count; i++) {
             if (currentArtIndex > maxArt) break;
+            
             const card = document.createElement("div");
             card.className = "art-card";
-            card.style.animationDelay = `${(i % count) * 0.1}s`;
+            card.style.animationDelay = `${(i % count) * 0.08}s`;
             
             const img = document.createElement("img");
             img.src = `art${currentArtIndex}.jpg`; 
-            img.loading = "lazy";
-            img.onerror = function() { this.closest('.art-card').remove(); }; 
+            img.alt = `Artwork ${currentArtIndex}`;
+            
+            // Only lazy load images after the initial view batch
+            if (currentArtIndex > 6) {
+                img.loading = "lazy";
+            }
+
+            img.onerror = function() { 
+                const parent = this.closest('.art-card');
+                if (parent) parent.remove(); 
+            }; 
             
             card.appendChild(img);
-            gallery.appendChild(card);
+
+            // Distribute items across columns predictably (0, 1, 2, 0, 1, 2...)
+            const targetColumn = columns[(currentArtIndex - 1) % numColumns];
+            targetColumn.appendChild(card);
+
             currentArtIndex++;
         }
+
         isFetching = false;
     }
 
+    // Initial load
     loadArtBatch(12);
 
+    // Infinite scroll trigger (loads earlier to prevent lag)
     window.addEventListener("scroll", () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1500) {
             loadArtBatch(6);
         }
     });
 
-    /* BACK TO TOP */
+    /* BACK TO TOP BUTTON */
     const topBtn = document.getElementById("backToTop");
     window.addEventListener("scroll", () => {
-        if (window.scrollY > 800) topBtn.style.display = "block";
-        else topBtn.style.display = "none";
+        topBtn.style.display = window.scrollY > 600 ? "block" : "none";
     });
     topBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
-    /* LIGHTBOX LOGIC */
+    /* LIGHTBOX FUNCTIONALITY */
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
     
@@ -229,7 +325,7 @@
         const card = e.target.closest(".art-card");
         if (card) {
             const img = card.querySelector("img");
-            if (img) {
+            if (img && img.src) {
                 lightboxImg.src = img.src;
                 lightbox.classList.add("active");
                 document.body.style.overflow = "hidden";
@@ -237,17 +333,25 @@
         }
     });
 
-    document.getElementById("closeBtn").onclick = () => {
+    function closeLightbox() {
         lightbox.classList.remove("active");
         document.body.style.overflow = "auto";
-    };
+    }
+
+    document.getElementById("closeBtn").onclick = closeLightbox;
 
     lightbox.onclick = (e) => {
         if (e.target !== lightboxImg) {
-            lightbox.classList.remove("active");
-            document.body.style.overflow = "auto";
+            closeLightbox();
         }
     };
+
+    // Close lightbox on Escape key
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && lightbox.classList.contains("active")) {
+            closeLightbox();
+        }
+    });
 </script>
 
 </body>
