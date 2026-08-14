@@ -34,7 +34,7 @@
             min-height: 100vh;
         }
 
-       
+        /* CURSOR & TRAILS */
         .shooting-star-cursor {
             display: none;
             position: fixed; 
@@ -69,7 +69,7 @@
         .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--duration) infinite ease-in-out; opacity: var(--opacity); }
         @keyframes twinkle { 0%, 100% { opacity: calc(var(--opacity)*0.3); } 50% { opacity: var(--opacity); } }
 
-       
+        /* HEADER */
         header {
             position: fixed; top: 0; width: 100%; padding: 20px 0; text-align: center;
             background: rgba(10, 14, 23, 0.85); backdrop-filter: blur(8px);
@@ -77,29 +77,24 @@
         }
         .logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--starlight); letter-spacing: 1px; }
 
-      
+        /* HERO SECTION */
         .hero { min-height: 75vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 40px; }
         .hero h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 20px; color: var(--starlight); }
         .hero p { max-width: 650px; opacity: 0.85; line-height: 1.7; margin: 0 auto 15px; font-weight: 300; }
 
+        /* PINTEREST MASONRY GRID */
         .gallery { padding: 40px 20px; }
         .gallery-container { 
-            display: flex;
-            gap: 30px;
+            column-count: 3; 
+            column-gap: 30px; 
             max-width: 1400px; 
             margin: auto; 
-            align-items: flex-start;
-        }
-
-        .gallery-column {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            flex: 1;
-            width: 100%;
         }
         
         .art-card {
+            break-inside: avoid;
+            -webkit-column-break-inside: avoid;
+            margin-bottom: 30px;
             background: rgba(10, 14, 23, 0.55);
             padding: 12px; 
             border-radius: 8px; 
@@ -124,6 +119,7 @@
             border-radius: 4px; 
         }
 
+        /* LIGHTBOX */
         .lightbox { 
             position: fixed; inset: 0; background: rgba(0, 0, 0, 0.92); 
             display: none; align-items: center; justify-content: center; 
@@ -137,7 +133,7 @@
         }
         .close-btn:hover { color: var(--moonstone); }
 
-       
+        /* FOOTER & BUTTONS */
         footer { text-align: center; padding: 80px 20px; width: 100%; }
         .footer-content { opacity: 0.7; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 15px; }
         .instagram-link { color: var(--moonstone); text-decoration: none; font-weight: 500; transition: 0.3s; }
@@ -152,14 +148,13 @@
         }
         #backToTop:hover { transform: translateY(-3px); background: #c7d2fe; }
 
-        
+        /* RESPONSIVE BREAKPOINTS */
         @media (max-width: 900px) { 
-            .gallery-container { gap: 20px; } 
-            .gallery-column { gap: 20px; }
+            .gallery-container { column-count: 2; column-gap: 20px; } 
         }
         @media (max-width: 600px) { 
-            .gallery-container { flex-direction: column; } 
-            .art-card { padding: 10px; }
+            .gallery-container { column-count: 1; } 
+            .art-card { padding: 10px; margin-bottom: 20px; }
             .hero h1 { font-size: 2.2rem; }
             .hero { padding-top: 100px; min-height: auto; }
         }
@@ -201,7 +196,7 @@
     </footer>
 
 <script>
-   
+    /* CURSOR TRAIL LOGIC */
     const cursor = document.querySelector(".shooting-star-cursor");
     const isPointerFine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
@@ -228,7 +223,7 @@
         setTimeout(() => star.remove(), 800);
     }
 
-
+    /* BACKGROUND STARS */
     function createStars() {
         const starContainer = document.querySelector(".stars");
         const fragment = document.createDocumentFragment();
@@ -243,42 +238,28 @@
     }
     createStars();
 
-
+    /* CLEAN GALLERY LOADER */
     const gallery = document.getElementById("gallery");
-    const numColumns = 3;
-    const columns = [];
-
-    for (let i = 0; i < numColumns; i++) {
-        const col = document.createElement("div");
-        col.className = "gallery-column";
-        gallery.appendChild(col);
-        columns.push(col);
-    }
-
-  
     let currentArtIndex = 1;
     const maxArt = 100;
     let isFetching = false;
 
-   function loadArtBatch(count) {
+    function loadArtBatch(count) {
         if (isFetching || currentArtIndex > maxArt) return;
         isFetching = true;
+
+        const fragment = document.createDocumentFragment();
 
         for (let i = 0; i < count; i++) {
             if (currentArtIndex > maxArt) break;
             
             const card = document.createElement("div");
             card.className = "art-card";
-            card.style.animationDelay = `${(i % count) * 0.08}s`;
+            card.style.animationDelay = `${(i % count) * 0.05}s`;
             
             const img = document.createElement("img");
             img.src = `art${currentArtIndex}.jpg`; 
             img.alt = `Artwork ${currentArtIndex}`;
-            
-            // Only lazy load images after the initial view batch
-            if (currentArtIndex > 6) {
-                img.loading = "lazy";
-            }
 
             img.onerror = function() { 
                 const parent = this.closest('.art-card');
@@ -286,39 +267,32 @@
             }; 
             
             card.appendChild(img);
-
-            // FIND THE SHORTEST COLUMN TO KEEP THE GRID BALANCED
-            let shortestColumn = columns[0];
-            columns.forEach(col => {
-                if (col.offsetHeight < shortestColumn.offsetHeight) {
-                    shortestColumn = col;
-                }
-            });
-
-            shortestColumn.appendChild(card);
-
+            fragment.appendChild(card);
             currentArtIndex++;
         }
 
+        gallery.appendChild(fragment);
         isFetching = false;
     }
 
-    loadArtBatch(12);
+    // Initial load
+    loadArtBatch(15);
 
-    
+    // Infinite scroll listener
     window.addEventListener("scroll", () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1500) {
-            loadArtBatch(6);
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
+            loadArtBatch(9);
         }
     });
 
-    
+    /* BACK TO TOP BUTTON */
     const topBtn = document.getElementById("backToTop");
     window.addEventListener("scroll", () => {
         topBtn.style.display = window.scrollY > 600 ? "block" : "none";
     });
     topBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
+    /* LIGHTBOX FUNCTIONALITY */
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
     
@@ -347,7 +321,6 @@
         }
     };
 
-   
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && lightbox.classList.contains("active")) {
             closeLightbox();
