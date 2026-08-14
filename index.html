@@ -148,16 +148,26 @@
         }
         #backToTop:hover { transform: translateY(-3px); background: #c7d2fe; }
 
-        /* RESPONSIVE BREAKPOINTS */
+         /* RESPONSIVE BREAKPOINTS */
         @media (max-width: 900px) { 
             .gallery-container { column-count: 2; column-gap: 20px; } 
         }
+        
+
         @media (max-width: 600px) { 
-            .gallery-container { column-count: 1; } 
-            .art-card { padding: 10px; margin-bottom: 20px; }
-            .hero h1 { font-size: 2.2rem; }
-            .hero { padding-top: 100px; min-height: auto; }
-        }
+    .gallery-container { 
+        column-count: 2; /* Shows a 2-column grid on phones */
+        column-gap: 12px;  /* Slightly smaller gap so images fit nicely */
+    } 
+    .art-card { 
+        padding: 6px;      /* Slightly tighter padding for mobile cards */
+        margin-bottom: 12px; 
+    }
+    .hero h1 { font-size: 2.2rem; }
+    .hero { padding-top: 100px; min-height: auto; }
+}
+
+    
     </style>
 </head>
 
